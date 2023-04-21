@@ -3,23 +3,27 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include <random>
 
 using namespace std;
 
 const int N = 5; // кількість філософів
-const int THINK_TIME = 1000; // 1 секунду думаємо
-const int EAT_TIME = 1000; // 1 секунду їмо
 
 mutex forks[N]; // виделки
 
 void philosopher(int id) {
     int left = id;
     int right = (id + 1) % N;
+
+    // визначаємо час
+    random_device rd;
+    mt19937 gen(rd());
+    uniform_int_distribution<> sleep_dist(500, 1500);
     
     while (true) {
         // думаємо
         cout << "Філософ " << id << " думає" << endl;
-        this_thread::sleep_for(chrono::milliseconds(THINK_TIME));
+        this_thread::sleep_for(chrono::milliseconds(sleep_dist(gen)));
         
         // беремо виделки
         cout << "Філософ " << id << " бере ліву виделку " << left << endl;
@@ -29,7 +33,7 @@ void philosopher(int id) {
         
         // їмо
         cout << "Філософ " << id << " їсть" << endl;
-        this_thread::sleep_for(chrono::milliseconds(EAT_TIME));
+        this_thread::sleep_for(chrono::milliseconds(sleep_dist(gen)));
         
         // кладемо виделки
         cout << "Філософ " << id << " кладе ліву виделку " << left << endl;
